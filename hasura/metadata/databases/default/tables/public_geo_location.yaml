@@ -1,0 +1,132 @@
+table:
+  name: geo_location
+  schema: public
+object_relationships:
+  - name: event
+    using:
+      manual_configuration:
+        column_mapping:
+          id: location_id
+        insertion_order: null
+        remote_table:
+          name: event
+          schema: public
+  - name: profile
+    using:
+      manual_configuration:
+        column_mapping:
+          id: location_id
+        insertion_order: null
+        remote_table:
+          name: profile
+          schema: public
+insert_permissions:
+  - role: tenant_admin
+    permission:
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+      columns: '*'
+  - role: user_base
+    permission:
+      check: {}
+      columns:
+        - city
+        - country_code
+        - id
+        - latitude
+        - longitude
+        - name
+        - postal_code
+        - state_code
+        - street1
+        - street2
+        - tenant_id
+    comment: ""
+select_permissions:
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      allow_aggregations: true
+  - role: user_base
+    permission:
+      columns:
+        - latitude
+        - longitude
+        - city
+        - country_code
+        - name
+        - postal_code
+        - state_code
+        - street1
+        - street2
+        - tenant_id
+        - created_at
+        - updated_at
+        - id
+      filter: {}
+    comment: ""
+update_permissions:
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+  - role: user_base
+    permission:
+      columns:
+        - city
+        - country_code
+        - latitude
+        - longitude
+        - name
+        - postal_code
+        - state_code
+        - street1
+        - street2
+        - tenant_id
+      filter:
+        _or:
+          - profile:
+              id:
+                _eq: X-Hasura-User-Id
+          - event:
+              profile_id:
+                _eq: X-Hasura-User-Id
+      check: null
+    comment: ""
+delete_permissions:
+  - role: tenant_admin
+    permission:
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+event_triggers:
+  - name: all_geo_location
+    definition:
+      delete:
+        columns: '*'
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{WORKER_URL}}/event'
+    headers:
+      - name: x-api-key
+        value_from_env: WORKER_API_KEY

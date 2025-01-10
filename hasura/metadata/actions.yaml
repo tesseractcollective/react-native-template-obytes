@@ -1,0 +1,218 @@
+actions:
+  - name: addressSearch
+    definition:
+      kind: ""
+      handler: '{{WORKER_URL}}/action'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+  - name: authAnonymousSignIn
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: public
+  - name: authEmailSendVerification
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: public
+  - name: authEmailUpdate
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: user_base
+  - name: authEmailVerify
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: public
+  - name: authMagicLinkSendEmail
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: public
+  - name: authMagicLinkSignIn
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: public
+  - name: authMagicLinkSignUpAndSend
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: public
+  - name: authPasswordReset
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEYd
+    permissions:
+      - role: public
+  - name: authPasswordSendResetEmail
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: public
+  - name: authPasswordSignIn
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: public
+  - name: authPasswordSignUpAndSendVerification
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: public
+  - name: authSmsSendCode
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: public
+  - name: authSmsSignIn
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: public
+  - name: authSmsSignUpAndSend
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: public
+  - name: authSmsUpdate
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: user_base
+  - name: authSmsVerify
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/auth'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: public
+  - name: claimRaffleTicket
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/action'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: user_base
+  - name: errorTest
+    definition:
+      kind: ""
+      handler: '{{WORKER_URL}}/action'
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+  - name: submitFeedback
+    definition:
+      kind: synchronous
+      handler: '{{WORKER_URL}}/action'
+      forward_client_headers: true
+      headers:
+        - name: x-api-key
+          value_from_env: WORKER_API_KEY
+    permissions:
+      - role: user_base
+      - role: public
+custom_types:
+  enums: []
+  input_objects:
+    - name: AuthResetPasswordInput
+    - name: AuthEmailPasswordInput
+    - name: AuthEmailInput
+    - name: AuthSmsInput
+    - name: AuthSmsCodeInput
+    - name: AuthAnonymousInput
+    - name: AuthEmailTicketInput
+    - name: AuthEmailSignupInput
+    - name: AuthEmailPasswordSignUpInput
+    - name: AuthSmsSignUpInput
+    - name: AddressAutocompleteInput
+    - name: ErrorInput
+    - name: GameRaffleTicketInput
+    - name: FeedbackInput
+  objects:
+    - name: AuthOutput
+    - name: Address
+    - name: AddressOutput
+    - name: ErrorOutput
+    - name: GameRaffleTicketOutput
+    - name: FeedbackOutput
+    - name: DuttonEventsOutput
+  scalars: []

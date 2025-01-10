@@ -1,0 +1,143 @@
+table:
+  name: question
+  schema: public
+object_relationships:
+  - name: questionSet
+    using:
+      foreign_key_constraint_on: question_set_id
+array_relationships:
+  - name: options
+    using:
+      foreign_key_constraint_on:
+        column: question_id
+        table:
+          name: question_option
+          schema: public
+  - name: responses
+    using:
+      foreign_key_constraint_on:
+        column: question_id
+        table:
+          name: question_response
+          schema: public
+insert_permissions:
+  - role: tenant_admin
+    permission:
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+      columns: '*'
+  - role: user_base
+    permission:
+      check:
+        questionSet:
+          profile_id:
+            _eq: X-Hasura-User-Id
+      columns:
+        - after_text
+        - id
+        - kind
+        - order
+        - question_set_id
+        - response_value_kind
+        - description
+        - tenant_id
+        - title
+    comment: ""
+select_permissions:
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      allow_aggregations: true
+  - role: user_base
+    permission:
+      columns:
+        - after_image_id_or_url
+        - after_text
+        - created_at
+        - id
+        - kind
+        - order
+        - question_set_id
+        - response_value_kind
+        - description
+        - tenant_id
+        - title
+        - updated_at
+      filter:
+        questionSet:
+          _or:
+            - visibility_kind:
+                _eq: public
+            - profile_id:
+                _eq: X-Hasura-User-Id
+    comment: ""
+update_permissions:
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+  - role: user_base
+    permission:
+      columns:
+        - after_text
+        - id
+        - kind
+        - order
+        - question_set_id
+        - response_value_kind
+        - description
+        - tenant_id
+        - title
+      filter:
+        questionSet:
+          profile_id:
+            _eq: X-Hasura-User-Id
+      check:
+        questionSet:
+          profile_id:
+            _eq: X-Hasura-User-Id
+    comment: ""
+delete_permissions:
+  - role: tenant_admin
+    permission:
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+  - role: user_base
+    permission:
+      filter:
+        questionSet:
+          profile_id:
+            _eq: X-Hasura-User-Id
+    comment: ""
+event_triggers:
+  - name: all_question
+    definition:
+      delete:
+        columns: '*'
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{WORKER_URL}}/event'
+    headers:
+      - name: x-api-key
+        value_from_env: WORKER_API_KEY

@@ -1,0 +1,118 @@
+table:
+  name: profile_attribute
+  schema: public
+insert_permissions:
+  - role: tenant_admin
+    permission:
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+      columns: '*'
+  - role: user_base
+    permission:
+      check:
+        profile_id:
+          _eq: X-Hasura-User-Id
+      columns:
+        - id
+        - kind
+        - order
+        - profile_id
+        - value
+        - visibility_kind
+    comment: ""
+select_permissions:
+  - role: public
+    permission:
+      columns:
+        - kind
+        - order
+        - value
+      filter:
+        visibility_kind:
+          _eq: public
+    comment: ""
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      allow_aggregations: true
+  - role: user_base
+    permission:
+      columns:
+        - order
+        - kind
+        - tenant_id
+        - value
+        - visibility_kind
+        - created_at
+        - updated_at
+        - id
+        - profile_id
+      filter:
+        _or:
+          - visibility_kind:
+              _eq: public
+          - profile_id:
+              _eq: X-Hasura-User-Id
+    comment: ""
+update_permissions:
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+  - role: user_base
+    permission:
+      columns:
+        - id
+        - kind
+        - order
+        - profile_id
+        - value
+        - visibility_kind
+      filter:
+        profile_id:
+          _eq: X-Hasura-User-Id
+      check: null
+    comment: ""
+delete_permissions:
+  - role: tenant_admin
+    permission:
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+  - role: user_base
+    permission:
+      filter:
+        profile_id:
+          _eq: X-Hasura-User-Id
+    comment: ""
+event_triggers:
+  - name: all_profile_attribute
+    definition:
+      delete:
+        columns: '*'
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{WORKER_URL}}/event'
+    headers:
+      - name: x-api-key
+        value_from_env: WORKER_API_KEY

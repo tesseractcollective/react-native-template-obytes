@@ -1,0 +1,41 @@
+table:
+  name: question_kind
+  schema: public
+is_enum: true
+select_permissions:
+  - role: public
+    permission:
+      columns:
+        - id
+      filter: {}
+    comment: ""
+  - role: tenant_admin
+    permission:
+      columns:
+        - id
+      filter: {}
+    comment: ""
+  - role: user_base
+    permission:
+      columns:
+        - id
+      filter: {}
+    comment: ""
+event_triggers:
+  - name: all_question_kind
+    definition:
+      delete:
+        columns: '*'
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{WORKER_URL}}/event'
+    headers:
+      - name: x-api-key
+        value_from_env: WORKER_API_KEY

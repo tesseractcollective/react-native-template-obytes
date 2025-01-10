@@ -1,0 +1,222 @@
+table:
+  name: profile
+  schema: public
+object_relationships:
+  - name: identity
+    using:
+      manual_configuration:
+        column_mapping:
+          id: id
+        insertion_order: null
+        remote_table:
+          name: profile_identity
+          schema: public
+  - name: location
+    using:
+      foreign_key_constraint_on: location_id
+  - name: tenant
+    using:
+      foreign_key_constraint_on: tenant_id
+array_relationships:
+  - name: attributes
+    using:
+      foreign_key_constraint_on:
+        column: profile_id
+        table:
+          name: profile_attribute
+          schema: public
+  - name: devices
+    using:
+      foreign_key_constraint_on:
+        column: profile_id
+        table:
+          name: profile_device
+          schema: public
+  - name: followedProfiles
+    using:
+      foreign_key_constraint_on:
+        column: follower_id
+        table:
+          name: profile_follower
+          schema: public
+  - name: followers
+    using:
+      foreign_key_constraint_on:
+        column: followed_profile_id
+        table:
+          name: profile_follower
+          schema: public
+  - name: logs
+    using:
+      foreign_key_constraint_on:
+        column: profile_id
+        table:
+          name: log
+          schema: public
+  - name: managedProfiles
+    using:
+      foreign_key_constraint_on:
+        column: manager_id
+        table:
+          name: profile_manager
+          schema: public
+  - name: optIns
+    using:
+      foreign_key_constraint_on:
+        column: receiver_id
+        table:
+          name: contact_opt_in
+          schema: public
+  - name: postsCreated
+    using:
+      foreign_key_constraint_on:
+        column: profile_id
+        table:
+          name: post
+          schema: public
+  - name: postsToProfile
+    using:
+      foreign_key_constraint_on:
+        column: posted_to_profile_id
+        table:
+          name: post
+          schema: public
+  - name: profileManagers
+    using:
+      foreign_key_constraint_on:
+        column: managed_profile_id
+        table:
+          name: profile_manager
+          schema: public
+  - name: sessions
+    using:
+      foreign_key_constraint_on:
+        column: profile_id
+        table:
+          name: user_session
+          schema: public
+computed_fields:
+  - name: displayName
+    definition:
+      function:
+        name: display_name
+        schema: public
+insert_permissions:
+  - role: tenant_admin
+    permission:
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+      columns: '*'
+select_permissions:
+  - role: public
+    permission:
+      columns:
+        - created_at
+        - id
+        - kind
+        - location_id
+        - photo_url
+        - tenant_id
+        - username
+      computed_fields:
+        - displayName
+      filter: {}
+    comment: ""
+  - role: self
+    permission:
+      columns:
+        - is_managed
+        - display_name_override
+        - kind
+        - photo_url
+        - tenant_id
+        - created_at
+        - updated_at
+        - username
+        - id
+        - location_id
+        - anonymous_id
+      computed_fields:
+        - displayName
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+    comment: ""
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      allow_aggregations: true
+  - role: user_base
+    permission:
+      columns:
+        - anonymous_id
+        - created_at
+        - display_name_override
+        - id
+        - kind
+        - location_id
+        - photo_url
+        - tenant_id
+        - updated_at
+        - username
+      computed_fields:
+        - displayName
+      filter: {}
+    comment: ""
+update_permissions:
+  - role: self
+    permission:
+      columns:
+        - anonymous_id
+        - display_name_override
+        - location_id
+        - photo_url
+        - username
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      check:
+        id:
+          _eq: X-Hasura-User-Id
+    comment: ""
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+delete_permissions:
+  - role: tenant_admin
+    permission:
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+event_triggers:
+  - name: all_profile
+    definition:
+      delete:
+        columns: '*'
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{WORKER_URL}}/event'
+    headers:
+      - name: x-api-key
+        value_from_env: WORKER_API_KEY

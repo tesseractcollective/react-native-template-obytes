@@ -1,0 +1,267 @@
+type Query {
+  addressSearch(
+    args: AddressAutocompleteInput!
+  ): AddressOutput!
+}
+
+type Mutation {
+  authAnonymousSignIn(
+    args: AuthAnonymousInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authEmailSendVerification(
+    args: AuthEmailInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authEmailUpdate(
+    args: AuthEmailInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authEmailVerify(
+    args: AuthEmailTicketInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authMagicLinkSendEmail(
+    args: AuthEmailInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authMagicLinkSignIn(
+    args: AuthEmailTicketInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authMagicLinkSignUpAndSend(
+    args: AuthEmailSignupInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authPasswordReset(
+    args: AuthResetPasswordInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authPasswordSendResetEmail(
+    args: AuthEmailInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authPasswordSignIn(
+    args: AuthEmailPasswordInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authPasswordSignUpAndSendVerification(
+    args: AuthEmailPasswordSignUpInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authSmsSendCode(
+    args: AuthSmsInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authSmsSignIn(
+    args: AuthSmsCodeInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authSmsSignUpAndSend(
+    args: AuthSmsSignUpInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authSmsUpdate(
+    args: AuthSmsInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  authSmsVerify(
+    args: AuthSmsCodeInput!
+  ): AuthOutput
+}
+
+type Mutation {
+  claimRaffleTicket(
+    args: GameRaffleTicketInput!
+  ): GameRaffleTicketOutput
+}
+
+type Query {
+  errorTest(
+    args: ErrorInput!
+  ): ErrorOutput
+}
+
+type Mutation {
+  submitFeedback(
+    args: FeedbackInput!
+  ): FeedbackOutput
+}
+
+input AuthResetPasswordInput {
+  email: citext!
+  password: String!
+  ticket: String!
+  tenantId: String!
+}
+
+input AuthEmailPasswordInput {
+  email: citext!
+  password: String!
+  tenantId: String!
+}
+
+input AuthEmailInput {
+  email: citext!
+  tenantId: String!
+  useVerificationCode: Boolean
+  state: String
+}
+
+input AuthSmsInput {
+  mobile: citext!
+  tenantId: String!
+}
+
+input AuthSmsCodeInput {
+  mobile: citext!
+  code: String!
+  tenantId: String!
+}
+
+input AuthAnonymousInput {
+  tenantId: String!
+  deviceId: String!
+}
+
+input AuthEmailTicketInput {
+  email: citext!
+  ticket: String!
+  tenantId: String!
+}
+
+input AuthEmailSignupInput {
+  email: citext!
+  tenantId: String!
+  firstName: String
+  lastName: String
+  displayNameOverride: String
+  username: citext
+  useVerificationCode: Boolean
+  state: String
+}
+
+input AuthEmailPasswordSignUpInput {
+  email: citext!
+  password: String!
+  tenantId: String!
+  firstName: String
+  lastName: String
+  displayNameOverride: String
+  username: citext
+  useVerificationCode: Boolean
+  state: String
+}
+
+input AuthSmsSignUpInput {
+  mobile: citext!
+  tenantId: String!
+  firstName: String
+  lastName: String
+  displayNameOverride: String
+  username: citext
+}
+
+input AddressAutocompleteInput {
+  search: String!
+  autocomplete: Boolean
+}
+
+input ErrorInput {
+  message: String!
+  source: String!
+  kind: String!
+  path: String!
+}
+
+input GameRaffleTicketInput {
+  ticketOptionId: uuid!
+  raffleId: uuid!
+  eventLiveId: uuid
+}
+
+input FeedbackInput {
+  name: String!
+  email: String!
+  feedback: String!
+  profileId: String
+  sourceScreen: String
+  navigationStateJSON: String
+  tenantId: String!
+}
+
+type AuthOutput {
+  tenantId: String!
+  profileId: uuid
+  token: String
+  sessionId: String
+}
+
+type Address {
+  name: String
+  street1: String!
+  street2: String
+  city: String!
+  postalCode: String
+  state: String
+  stateCode: String
+  country: String!
+  countryCode: String!
+  latitude: Float!
+  longitude: Float!
+  formatted: String!
+  timezone: String!
+  metadata: jsonb!
+}
+
+type AddressOutput {
+  addresses: [Address!]!
+}
+
+type ErrorOutput {
+  message: String!
+}
+
+type GameRaffleTicketOutput {
+  message: String!
+  ticketsClaimed: Int
+}
+
+type FeedbackOutput {
+  success: Boolean!
+}
+
+type DuttonEventsOutput {
+  events: [jsonb!]!
+}
+

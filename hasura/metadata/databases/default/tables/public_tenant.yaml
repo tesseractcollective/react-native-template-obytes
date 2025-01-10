@@ -1,0 +1,58 @@
+table:
+  name: tenant
+  schema: public
+select_permissions:
+  - role: public
+    permission:
+      columns:
+        - created_at
+        - domain
+        - id
+        - name
+        - profile_id
+        - transactional_from_email
+      filter: {}
+    comment: ""
+  - role: tenant_admin
+    permission:
+      columns:
+        - name
+        - created_at
+        - updated_at
+        - domain
+        - transactional_from_email
+        - profile_id
+        - id
+      filter:
+        id:
+          _eq: X-Hasura-Tenant-Id
+    comment: ""
+  - role: user_base
+    permission:
+      columns:
+        - created_at
+        - domain
+        - id
+        - name
+        - profile_id
+        - transactional_from_email
+      filter: {}
+    comment: ""
+event_triggers:
+  - name: all_tenant
+    definition:
+      delete:
+        columns: '*'
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{WORKER_URL}}/event'
+    headers:
+      - name: x-api-key
+        value_from_env: WORKER_API_KEY

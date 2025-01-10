@@ -1,0 +1,107 @@
+table:
+  name: profile_identity
+  schema: public
+object_relationships:
+  - name: profile
+    using:
+      foreign_key_constraint_on: id
+insert_permissions:
+  - role: self
+    permission:
+      check:
+        id:
+          _eq: X-Hasura-User-Id
+      set:
+        id: x-hasura-user-id
+        tenant_id: x-hasura-tenant-id
+      columns:
+        - first_name
+        - last_name
+        - terms_accepted_on
+    comment: ""
+  - role: tenant_admin
+    permission:
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+      columns: '*'
+select_permissions:
+  - role: self
+    permission:
+      columns:
+        - dob
+        - first_name
+        - ip_address
+        - last_name
+        - name
+        - tenant_id
+        - created_at
+        - terms_accepted_on
+        - updated_at
+        - email
+        - mobile
+        - unverified_email
+        - unverified_mobile
+        - id
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+    comment: ""
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      allow_aggregations: true
+update_permissions:
+  - role: self
+    permission:
+      columns:
+        - first_name
+        - last_name
+        - terms_accepted_on
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      check:
+        id:
+          _eq: X-Hasura-User-Id
+    comment: ""
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+delete_permissions:
+  - role: tenant_admin
+    permission:
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+event_triggers:
+  - name: all_profile_identity
+    definition:
+      delete:
+        columns: '*'
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{WORKER_URL}}/event'
+    headers:
+      - name: x-api-key
+        value_from_env: WORKER_API_KEY

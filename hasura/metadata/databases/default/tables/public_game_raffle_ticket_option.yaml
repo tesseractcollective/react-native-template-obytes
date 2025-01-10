@@ -1,0 +1,81 @@
+table:
+  name: game_raffle_ticket_option
+  schema: public
+object_relationships:
+  - name: raffle
+    using:
+      foreign_key_constraint_on: raffle_id
+insert_permissions:
+  - role: tenant_admin
+    permission:
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+      columns: '*'
+select_permissions:
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      allow_aggregations: true
+  - role: user_base
+    permission:
+      columns:
+        - created_at
+        - raffle_id
+        - id
+        - instructions
+        - is_required
+        - kind
+        - tickets_granted
+        - updated_at
+      filter:
+        raffle:
+          _or:
+            - profile_id:
+                _eq: X-Hasura-User-Id
+            - visibility:
+                _eq: public
+      limit: 100
+      allow_aggregations: true
+    comment: ""
+update_permissions:
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+delete_permissions:
+  - role: tenant_admin
+    permission:
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+event_triggers:
+  - name: all_game_raffle_ticket_option
+    definition:
+      delete:
+        columns: '*'
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{WORKER_URL}}/event'
+    headers:
+      - name: x-api-key
+        value_from_env: WORKER_API_KEY

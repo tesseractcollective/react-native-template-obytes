@@ -1,0 +1,101 @@
+table:
+  name: contact_opt_in
+  schema: public
+object_relationships:
+  - name: receiver
+    using:
+      foreign_key_constraint_on: receiver_id
+  - name: sender
+    using:
+      foreign_key_constraint_on: sender_id
+insert_permissions:
+  - role: self
+    permission:
+      check:
+        receiver_id:
+          _eq: X-Hasura-User-Id
+      set:
+        tenant_id: x-hasura-tenant-id
+      columns:
+        - channel_kind
+        - email
+        - is_opt_out
+        - name
+        - phone
+        - receiver_id
+        - sender_id
+    comment: ""
+  - role: tenant_admin
+    permission:
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+      columns: '*'
+select_permissions:
+  - role: self
+    permission:
+      columns:
+        - channel_kind
+        - created_at
+        - email
+        - id
+        - is_opt_out
+        - name
+        - phone
+        - push_token
+        - receiver_id
+        - sender_id
+        - tenant_id
+        - updated_at
+      filter:
+        _or:
+          - receiver_id:
+              _eq: X-Hasura-User-Id
+          - sender_id:
+              _eq: X-Hasura-User-Id
+    comment: ""
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      allow_aggregations: true
+update_permissions:
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+delete_permissions:
+  - role: tenant_admin
+    permission:
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+event_triggers:
+  - name: all_contact_opt_in
+    definition:
+      delete:
+        columns: '*'
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{WORKER_URL}}/event'
+    headers:
+      - name: x-api-key
+        value_from_env: WORKER_API_KEY

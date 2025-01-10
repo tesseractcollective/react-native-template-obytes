@@ -1,0 +1,105 @@
+table:
+  name: event
+  schema: public
+object_relationships:
+  - name: eventLive
+    using:
+      foreign_key_constraint_on:
+        column: event_id
+        table:
+          name: event_live
+          schema: public
+  - name: location
+    using:
+      foreign_key_constraint_on: location_id
+  - name: profile
+    using:
+      foreign_key_constraint_on: profile_id
+insert_permissions:
+  - role: tenant_admin
+    permission:
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+      columns: '*'
+select_permissions:
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      allow_aggregations: true
+  - role: user_base
+    permission:
+      columns:
+        - created_at
+        - end_date
+        - end_timestamp
+        - id
+        - kind
+        - label
+        - location_id
+        - name
+        - profile_id
+        - raffle_id
+        - start_date
+        - start_timestamp
+        - template_id
+        - tenant_id
+        - updated_at
+      filter: {}
+      limit: 100
+    comment: ""
+update_permissions:
+  - role: self
+    permission:
+      columns:
+        - kind
+        - label
+        - name
+        - raffle_id
+      filter:
+        profile_id:
+          _eq: X-Hasura-User-Id
+      check:
+        profile_id:
+          _eq: X-Hasura-User-Id
+    comment: ""
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+delete_permissions:
+  - role: tenant_admin
+    permission:
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+event_triggers:
+  - name: all_event
+    definition:
+      delete:
+        columns: '*'
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{WORKER_URL}}/event'
+    headers:
+      - name: x-api-key
+        value_from_env: WORKER_API_KEY

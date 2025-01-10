@@ -1,0 +1,99 @@
+table:
+  name: game_raffle_ticket
+  schema: public
+object_relationships:
+  - name: prize
+    using:
+      foreign_key_constraint_on: raffle_prize_id
+  - name: profile
+    using:
+      foreign_key_constraint_on: profile_id
+  - name: raffle
+    using:
+      foreign_key_constraint_on: raffle_id
+insert_permissions:
+  - role: tenant_admin
+    permission:
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+      columns: '*'
+select_permissions:
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      allow_aggregations: true
+  - role: user_base
+    permission:
+      columns:
+        - created_at
+        - event_live_id
+        - from_option_id
+        - raffle_id
+        - raffle_prize_id
+        - id
+        - is_used
+        - kind
+        - profile_id
+        - updated_at
+      filter:
+        _or:
+          - profile_id:
+              _eq: X-Hasura-User-Id
+          - raffle:
+              profile_id:
+                _eq: X-Hasura-User-Id
+      limit: 100
+      allow_aggregations: true
+    comment: ""
+update_permissions:
+  - role: tenant_admin
+    permission:
+      columns: '*'
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      check:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+      set:
+        tenant_id: X-Hasura-Tenant-Id
+  - role: user_base
+    permission:
+      columns:
+        - raffle_prize_id
+      filter:
+        raffle:
+          profile_id:
+            _eq: X-Hasura-User-Id
+      check: null
+    comment: ""
+delete_permissions:
+  - role: tenant_admin
+    permission:
+      filter:
+        tenant_id:
+          _eq: X-Hasura-Tenant-Id
+event_triggers:
+  - name: all_game_raffle_ticket
+    definition:
+      delete:
+        columns: '*'
+      enable_manual: false
+      insert:
+        columns: '*'
+      update:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{WORKER_URL}}/event'
+    headers:
+      - name: x-api-key
+        value_from_env: WORKER_API_KEY

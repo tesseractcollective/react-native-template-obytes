@@ -1,0 +1,14 @@
+- name: jobSyncEventsTheDuttons
+  webhook: '{{WORKER_URL}}/job'
+  schedule: 0 0 * * *
+  include_in_metadata: true
+  payload: {}
+  retry_conf:
+    num_retries: 2
+    retry_interval_seconds: 10
+    timeout_seconds: 60
+    tolerance_seconds: 21600
+  headers:
+    - name: x-api-key
+      value_from_env: WORKER_API_KEY
+  comment: ""

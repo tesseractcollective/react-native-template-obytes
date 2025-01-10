@@ -10,7 +10,7 @@ import {
 } from 'react-query-kit';
 
 import { authClient } from '@/lib/auth/auth-state';
-import { useSubscription } from '@/lib/hooks/use-subscription';
+import { useSubscription } from '@/lib/graphql/use-subscription';
 
 import {
   buildItemsWithAggregateQuery,

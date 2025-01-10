@@ -7,7 +7,7 @@ import type {
   Variables,
 } from '@/types/graphql-client-types';
 
-import { getOperationName } from '@/graphql/graphql-utils';
+import { getOperationName } from '@/lib/graphql/graphql-utils';
 
 export interface UseSubscriptionOptions<V extends Variables = Variables>
   extends SubscriptionOptions<V> {

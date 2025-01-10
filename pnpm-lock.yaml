@@ -68,6 +68,9 @@ importers:
       i18next:
         specifier: ^23.14.0
         version: 23.14.0
+      jwt-decode:
+        specifier: ^4.0.0
+        version: 4.0.0
       lodash.memoize:
         specifier: ^4.1.2
         version: 4.1.2
@@ -137,6 +140,9 @@ importers:
       tailwind-variants:
         specifier: ^0.2.1
         version: 0.2.1(tailwindcss@3.4.4)
+      valtio:
+        specifier: ^2.1.2
+        version: 2.1.2(@types/react@18.3.12)(react@18.3.1)
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -208,8 +214,8 @@ importers:
         specifier: ^5.0.2
         version: 5.0.2
       codegen-graphql-hasura:
-        specifier: github:tesseractcollective/codegen-graphql-hasura#v1.0.0
-        version: '@tesseract/codegen-graphql-hasura@git+https://git@github.com:tesseractcollective/codegen-graphql-hasura.git#1df62cb1c59c7ff0d8d0e08efd43374491748765'
+        specifier: github:tesseractcollective/codegen-graphql-hasura#v1.0.2
+        version: '@tesseract/codegen-graphql-hasura@git+https://git@github.com:tesseractcollective/codegen-graphql-hasura.git#61a215479f03bd1ca079eee220c02b32304e87b3'
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -2297,8 +2303,8 @@ packages:
     peerDependencies:
       react: ^18 || ^19
 
-  '@tesseract/codegen-graphql-hasura@git+https://git@github.com:tesseractcollective/codegen-graphql-hasura.git#1df62cb1c59c7ff0d8d0e08efd43374491748765':
-    resolution: {commit: 1df62cb1c59c7ff0d8d0e08efd43374491748765, repo: git@github.com:tesseractcollective/codegen-graphql-hasura.git, type: git}
+  '@tesseract/codegen-graphql-hasura@git+https://git@github.com:tesseractcollective/codegen-graphql-hasura.git#61a215479f03bd1ca079eee220c02b32304e87b3':
+    resolution: {commit: 61a215479f03bd1ca079eee220c02b32304e87b3, repo: git@github.com:tesseractcollective/codegen-graphql-hasura.git, type: git}
     version: 1.0.0
 
   '@testing-library/jest-dom@6.5.0':
@@ -5529,6 +5535,10 @@ packages:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
     engines: {node: '>=4.0'}
 
+  jwt-decode@4.0.0:
+    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
+    engines: {node: '>=18'}
+
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
 
@@ -6632,6 +6642,9 @@ packages:
 
   proto-list@1.2.4:
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
+
+  proxy-compare@3.0.1:
+    resolution: {integrity: sha512-V9plBAt3qjMlS1+nC8771KNf6oJ12gExvaxnNzN/9yVRLdTv/lc+oJlnSzrdYDAvBfTStPCoiaCOTmTs0adv7Q==}
 
   proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
@@ -8005,6 +8018,18 @@ packages:
   validate-npm-package-name@5.0.1:
     resolution: {integrity: sha512-OljLrQ9SQdOUqTaQxqL5dEfZWrXExyyWsozYlAWFawPVNuD83igl7uJD2RTkNMbniIYgt8l81eCJGIdQF7avLQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
+  valtio@2.1.2:
+    resolution: {integrity: sha512-fhekN5Rq7dvHULHHBlJeXHrQDl0Jj9GXfNavCm3gkD06crGchaG1nf/J7gSlfZU2wPcRdVS5jBKWHtE2NNz97A==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      react: '>=18.0.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
 
   value-or-promise@1.0.12:
     resolution: {integrity: sha512-Z6Uz+TYwEqE7ZN50gwn+1LCVo9ZVrpxRPOhOLnncYkY1ZzOYtrX8Fwf/rFktZ8R5mJms6EZf5TqNOMeZmnPq9Q==}
@@ -11315,7 +11340,7 @@ snapshots:
       '@tanstack/query-core': 5.52.0
       react: 18.3.1
 
-  '@tesseract/codegen-graphql-hasura@git+https://git@github.com:tesseractcollective/codegen-graphql-hasura.git#1df62cb1c59c7ff0d8d0e08efd43374491748765':
+  '@tesseract/codegen-graphql-hasura@git+https://git@github.com:tesseractcollective/codegen-graphql-hasura.git#61a215479f03bd1ca079eee220c02b32304e87b3':
     dependencies:
       case: 1.6.3
       cross-fetch: 4.1.0
@@ -15369,6 +15394,8 @@ snapshots:
       object.assign: 4.1.5
       object.values: 1.2.0
 
+  jwt-decode@4.0.0: {}
+
   keyv@4.5.4:
     dependencies:
       json-buffer: 3.0.1
@@ -16596,6 +16623,8 @@ snapshots:
       react-is: 16.13.1
 
   proto-list@1.2.4: {}
+
+  proxy-compare@3.0.1: {}
 
   proxy-from-env@1.1.0: {}
 
@@ -18072,6 +18101,13 @@ snapshots:
       spdx-expression-parse: 3.0.1
 
   validate-npm-package-name@5.0.1: {}
+
+  valtio@2.1.2(@types/react@18.3.12)(react@18.3.1):
+    dependencies:
+      proxy-compare: 3.0.1
+    optionalDependencies:
+      '@types/react': 18.3.12
+      react: 18.3.1
 
   value-or-promise@1.0.12: {}
 

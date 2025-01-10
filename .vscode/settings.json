@@ -11,18 +11,11 @@
   "[javascript][typescript][typescriptreact]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.codeActionsOnSave": [
-      "source.addMissingImports",
-      "source.fixAll.eslint"
-    ]
+    "editor.codeActionsOnSave": ["source.addMissingImports"]
   },
   "[json][jsonc]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[astro]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "astro-build.astro-vscode"
   },
   "cSpell.words": ["Flashlist", "Lato"],
   "i18n-ally.localesPaths": ["src/translations/"],

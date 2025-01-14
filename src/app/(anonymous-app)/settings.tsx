@@ -14,7 +14,7 @@ import {
   View,
 } from '@/components/ui';
 import { Github, Rate, Share, Support, Website } from '@/components/ui/icons';
-import { authSignOut, translate } from '@/lib';
+import { translate } from '@/lib';
 
 export default function Settings() {
   const { colorScheme } = useColorScheme();
@@ -71,12 +71,6 @@ export default function Settings() {
               onPress={() => {}}
             />
           </ItemsContainer>
-
-          <View className="my-8">
-            <ItemsContainer>
-              <Item text="settings.logout" onPress={authSignOut} />
-            </ItemsContainer>
-          </View>
         </View>
       </ScrollView>
     </>

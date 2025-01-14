@@ -1,5 +1,5 @@
+import { Env } from '@env';
 import { jwtDecode } from 'jwt-decode';
-import { showMessage } from 'react-native-flash-message';
 import { proxy } from 'valtio';
 
 import GraphQLClient from '@/lib/graphql/graphql-client';
@@ -25,9 +25,7 @@ export class Token {
     return this.value ? jwtDecode<Record<string, any>>(this.value) : {};
   }
   get hasuraClaims(): Record<string, string> {
-    return process.env.JWT_CLAIMS_KEY
-      ? (this.decoded[process.env.JWT_CLAIMS_KEY] ?? {})
-      : {};
+    return Env.JWT_CLAIMS_KEY ? (this.decoded[Env.JWT_CLAIMS_KEY] ?? {}) : {};
   }
   get profileId(): string {
     return this.hasuraClaims['x-hasura-user-id'] ?? '';
@@ -107,8 +105,8 @@ const authResponseMiddleware = (): ResponseMiddleware => {
       JSON.stringify(variables)
     );
 
-    if (process.env.SITE_URL?.includes('localhost')) {
-      showMessage({ message: JSON.stringify(response), type: 'danger' });
+    if (Env.HASURA_GRAPHQL_ENDPOINT?.includes('localhost')) {
+      // showMessage({ message: JSON.stringify(response), type: 'danger' });
     }
   };
 };
@@ -130,10 +128,10 @@ export function clearAuthState() {
 }
 
 export function authClient() {
-  if (!process.env.HASURA_URL) {
-    throw new Error('HASURA_URL is not set');
+  if (!Env.HASURA_GRAPHQL_ENDPOINT) {
+    throw new Error('HASURA_GRAPHQL_ENDPOINT is not set');
   }
-  return new GraphQLClient(process.env.HASURA_URL, {
+  return new GraphQLClient(Env.HASURA_GRAPHQL_ENDPOINT, {
     headers: createRequestHeaders(),
     requestMiddleware: authRequestMiddleware(),
     responseMiddleware: authResponseMiddleware(),

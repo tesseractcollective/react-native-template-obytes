@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { Link, Redirect, SplashScreen, Tabs } from 'expo-router';
 import React, { useCallback, useEffect } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { Pressable, Text } from '@/components/ui';
 import {
@@ -8,28 +9,27 @@ import {
   Settings as SettingsIcon,
   Style as StyleIcon,
 } from '@/components/ui/icons';
-import { useAuth, useIsFirstTime } from '@/lib';
+import { authState, useIsFirstTime } from '@/lib';
 
 export default function TabLayout() {
-  const status = useAuth.use.status();
+  const authSnap = useSnapshot(authState);
+  const isInitialized = authSnap.isInitialized;
   const [isFirstTime] = useIsFirstTime();
   const hideSplash = useCallback(async () => {
     await SplashScreen.hideAsync();
   }, []);
   useEffect(() => {
-    if (status !== 'idle') {
+    if (isInitialized) {
       setTimeout(() => {
         hideSplash();
       }, 1000);
     }
-  }, [hideSplash, status]);
+  }, [hideSplash, isInitialized]);
 
   if (isFirstTime) {
     return <Redirect href="/onboarding" />;
   }
-  if (status === 'signOut') {
-    return <Redirect href="/login" />;
-  }
+
   return (
     <Tabs>
       <Tabs.Screen
@@ -58,6 +58,12 @@ export default function TabLayout() {
           headerShown: false,
           tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
           tabBarButtonTestID: 'settings-tab',
+        }}
+      />
+      <Tabs.Screen
+        name="p/[profileid]"
+        options={{
+          href: null,
         }}
       />
     </Tabs>

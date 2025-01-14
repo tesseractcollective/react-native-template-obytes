@@ -79,16 +79,15 @@ const client = z.object({
   VERSION: z.string(),
 
   // ADD YOUR CLIENT ENV VARS HERE
-  API_URL: z.string(),
-  VAR_NUMBER: z.number(),
-  VAR_BOOL: z.boolean(),
+  HASURA_GRAPHQL_ENDPOINT: z.string(),
+  TENANT_ID: z.string(),
+  JWT_CLAIMS_KEY: z.string(),
 });
 
 const buildTime = z.object({
   EXPO_ACCOUNT_OWNER: z.string(),
   EAS_PROJECT_ID: z.string(),
   // ADD YOUR BUILD TIME ENV VARS HERE
-  SECRET_KEY: z.string(),
 });
 
 /**
@@ -103,10 +102,12 @@ const _clientEnv = {
   VERSION: packageJSON.version,
 
   // ADD YOUR ENV VARS HERE TOO
-  API_URL: process.env.API_URL,
-  VAR_NUMBER: Number(process.env.VAR_NUMBER),
-  VAR_BOOL: process.env.VAR_BOOL === 'true',
+  HASURA_GRAPHQL_ENDPOINT: process.env.HASURA_GRAPHQL_ENDPOINT,
+  TENANT_ID: process.env.TENANT_ID,
+  JWT_CLAIMS_KEY: process.env.JWT_CLAIMS_KEY,
 };
+
+console.log('ROOT CLIENT ENV', _clientEnv);
 
 /**
  * @type {Record<keyof z.infer<typeof buildTime> , unknown>}
@@ -115,7 +116,6 @@ const _buildTimeEnv = {
   EXPO_ACCOUNT_OWNER,
   EAS_PROJECT_ID,
   // ADD YOUR ENV VARS HERE TOO
-  SECRET_KEY: process.env.SECRET_KEY,
 };
 
 /**

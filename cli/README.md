@@ -13,8 +13,21 @@
 # 🚀 Quick start
 
 ```sh
-npx create-obytes-app@latest MyApp
+cursor ~/.zshrc
+```
 
+Add this line replacing `replace_path_here` wtih the correct path for where you pulled down the repo
+
+```
+alias create-tesseract-app="node replace_path_here/react-native-template-obytes/cli/index.js"
+```
+
+Restart terminal or run `exec zsh`
+
+Run
+
+```
+create-tesseract-app app-name-here
 ```
 
 # Overview

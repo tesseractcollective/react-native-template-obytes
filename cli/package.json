@@ -1,5 +1,5 @@
 {
-  "name": "create-obytes-app",
+  "name": "create-obytes-app-tesseract",
   "version": "1.7.1",
   "description": "Obytes expo starter cli",
   "homepage": "https://github.com/obytes/react-native-template-obytes",
@@ -12,7 +12,7 @@
     "start": "node ."
   },
   "bin": {
-    "create-obytes-app": "index.js"
+    "create-obytes-app-tesseract": "index.js"
   },
   "files": [
     "index.js",
@@ -21,6 +21,7 @@
     "setup-project.js"
   ],
   "dependencies": {
+    "@inquirer/prompts": "^7.2.3",
     "consola": "^3.2.3",
     "fs-extra": "^10.1.0"
   },

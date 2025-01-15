@@ -2,6 +2,7 @@ import type { CodegenConfig } from '@graphql-codegen/cli';
 import type { Types } from '@graphql-codegen/plugin-helpers';
 import Case from 'case';
 import type { IGraphQLConfig } from 'graphql-config';
+
 import hasuraMetadata from './hasura/generated/metadata.json';
 import hasuraKeys from './hasura/generated/table-keys.json';
 
@@ -17,6 +18,15 @@ const hasuraScalars = {
   uuid: { input: 'string', output: 'string' },
 };
 
+const graphqlUrlRoot = process.env.HASURA_GRAPHQL_ENDPOINT?.endsWith(
+  '/v1/graphql'
+)
+  ? process.env.HASURA_GRAPHQL_ENDPOINT.substring(
+      0,
+      process.env.HASURA_GRAPHQL_ENDPOINT.indexOf('/v1/graphql')
+    )
+  : process.env.HASURA_GRAPHQL_ENDPOINT;
+
 function schemaConfig(role?: string) {
   const headers: Record<string, string> = {
     'x-hasura-admin-secret': process.env.HASURA_GRAPHQL_ADMIN_SECRET as string,
@@ -25,7 +35,7 @@ function schemaConfig(role?: string) {
     headers['x-hasura-role'] = role;
   }
   return {
-    [process.env.HASURA_GRAPHQL_ENDPOINT + '/v1/graphql']: { headers },
+    [graphqlUrlRoot + '/v1/graphql']: { headers },
   };
 }
 
@@ -84,15 +94,6 @@ const documentsForRole = (role: string): string[] => {
         `./src/graphql/generated/${Case.kebab(role)}-role/*.{graphql,gql}`,
         `./src/graphql/${Case.kebab(role)}-role/*.{graphql,gql}`,
       ];
-};
-
-const typesConfig = (role: string): Types.ConfiguredOutput => {
-  return {
-    schema: [schemaConfig(role)],
-    documents: documentsForRole(role),
-    plugins: typescriptPlugins,
-    config: scalarsConfig,
-  };
 };
 
 const graphqlRequestConfig = (role: string): Types.ConfiguredOutput => {

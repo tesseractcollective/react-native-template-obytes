@@ -1,23 +1,38 @@
-import dotenv from 'dotenv'
-dotenv.config()
+import dotenv from 'dotenv';
+dotenv.config();
 
-const adminSecret = process.env.HASURA_GRAPHQL_ADMIN_SECRET as string
+const adminSecret = process.env.HASURA_GRAPHQL_ADMIN_SECRET as string;
+
+// if we dont have a hasura endpoint throw an error
+if (!process.env.HASURA_GRAPHQL_ENDPOINT) {
+  throw new Error('HASURA_GRAPHQL_ENDPOINT is not set');
+}
+
+// get the root of the hasura endpoint
+const graphqlUrlRoot = process.env.HASURA_GRAPHQL_ENDPOINT.endsWith(
+  '/v1/graphql'
+)
+  ? process.env.HASURA_GRAPHQL_ENDPOINT.substring(
+      0,
+      process.env.HASURA_GRAPHQL_ENDPOINT.indexOf('/v1/graphql')
+    )
+  : process.env.HASURA_GRAPHQL_ENDPOINT;
 
 export default {
-  graphqlUrl: process.env.HASURA_GRAPHQL_ENDPOINT + '/v1/graphql',
+  graphqlUrl: graphqlUrlRoot + '/v1/graphql',
   adminSecret: adminSecret,
 
   // scripts only
   metadataConfig: {
-    url: process.env.HASURA_GRAPHQL_ENDPOINT + '/v1/metadata',
+    url: graphqlUrlRoot + '/v1/metadata',
     headers: {
       ['x-hasura-admin-secret']: adminSecret,
     },
   },
   queryApiConfig: {
-    url: process.env.HASURA_GRAPHQL_ENDPOINT + '/v2/query',
+    url: graphqlUrlRoot + '/v2/query',
     headers: {
       ['x-hasura-admin-secret']: adminSecret,
     },
   },
-}
+};

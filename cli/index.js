@@ -3,7 +3,7 @@
 const { consola } = require('consola');
 const { showMoreDetails } = require('./utils.js');
 const { cloneLastTemplateRelease } = require('./clone-repo.js');
-const { setupProject, installDeps } = require('./setup-project.js');
+const { setupProject, installDeps, generateGraphql } = require( './setup-project.js' )
 const { setupQuestions } = require( './setup-questions.js' )
 
 const createObytesApp = async () => {
@@ -32,7 +32,10 @@ const createObytesApp = async () => {
   } );
 
   // install project dependencies using pnpm
-  await installDeps(projectName);
+  await installDeps( projectName )
+
+  // generate graphql types
+  await generateGraphql( projectName );
 
   // show instructions to run the project + link to the documentation
   showMoreDetails(projectName);

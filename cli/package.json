@@ -18,11 +18,13 @@
     "index.js",
     "utils.js",
     "clone-repo.js",
-    "setup-project.js"
+    "setup-project.js",
+    "setup-questions.js"
   ],
   "dependencies": {
     "@inquirer/prompts": "^7.2.3",
     "consola": "^3.2.3",
+    "dotenv": "^16.4.7",
     "fs-extra": "^10.1.0"
   },
   "keywords": [

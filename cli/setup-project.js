@@ -15,8 +15,8 @@ const installDeps = async ( projectName ) => {
   } )
 }
 
-const generateGraphql = async () => {
-  await runCommand( `pnpm codegen`, {
+const generateGraphql = async ( projectName ) => {
+  await runCommand( `cd ${projectName} && pnpm codegen`, {
     loading: 'Generating graphql types',
     success: 'Graphql types generated',
     error: 'Failed to generate graphql types, run `pnpm codegen` manually.',
@@ -95,8 +95,27 @@ const updateHasuraConfig = ( { HASURA_GRAPHQL_ENDPOINT, projectName } ) => {
   const hasuraConfig = fs.readFileSync( hasuraConfigPath, {
     encoding: 'utf-8',
   } )
-  const replaced = hasuraConfig.replace( /http:\/\/localhost:8080/gi, HASURA_GRAPHQL_ENDPOINT.substring( 0, HASURA_GRAPHQL_ENDPOINT.indexOf( '/v1/graphql' ) ) )
+  const graphqlEndpointRoot = HASURA_GRAPHQL_ENDPOINT.substring( 0, HASURA_GRAPHQL_ENDPOINT.indexOf( '/v1/graphql' ) )
+  const replaced = hasuraConfig.replace( /http:\/\/localhost:8080/gi, graphqlEndpointRoot )
   fs.writeFileSync( hasuraConfigPath, replaced, { spaces: 2 } )
+}
+
+const createEnvFiles = ( { HASURA_GRAPHQL_ENDPOINT, projectName } ) => {
+  const graphqlEndpointRoot = HASURA_GRAPHQL_ENDPOINT.substring( 0, HASURA_GRAPHQL_ENDPOINT.indexOf( '/v1/graphql' ) )
+  const cliDefaultEnvContent = `HASURA_GRAPHQL_ENDPOINT=${graphqlEndpointRoot}\nHASURA_GRAPHQL_ADMIN_SECRET=admin-secret\nWORKER_URL=http://localhost:8787\nWORKER_API_KEY=worker-api-key`
+  fs.writeFileSync( `${projectName}/hasura/.env`, cliDefaultEnvContent )
+  fs.writeFileSync( `${projectName}/scripts/.env`, cliDefaultEnvContent )
+
+  fs.writeFileSync( `${projectName}/.env`, `HASURA_GRAPHQL_ENDPOINT=http://localhost:8080/v1/graphql
+    HASURA_GRAPHQL_ADMIN_SECRET=admin-secret
+JWT_CLAIMS_KEY=https://hasura.io/jwt/claims`)
+}
+
+const setupGeneratedFolders = ( projectName ) => {
+  fs.mkdirSync( `${projectName}/hasura/generated` )
+  fs.mkdirSync( `${projectName}/scripts/generated` )
+  fs.mkdirSync( `${projectName}/src/graphql/generated` )
+  fs.mkdirSync( `${projectName}/src/api/generated` )
 }
 
 const setupProject = async ( args ) => {
@@ -108,7 +127,9 @@ const setupProject = async ( args ) => {
     updatePackageInfos( projectName )
     updateProjectConfig( projectName )
     updateEnvFiles( args )
+    createEnvFiles( args )
     updateHasuraConfig( args )
+    setupGeneratedFolders( projectName )
     consola.success( `Clean up and setup your project 🧹` )
   } catch ( error ) {
     consola.error( `Failed to clean up project folder`, error )

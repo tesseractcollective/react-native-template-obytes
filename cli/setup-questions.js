@@ -21,6 +21,7 @@ const setupQuestions = async ( args ) => {
   if ( isTesseract ) {
     answers.HASURA_GRAPHQL_ENDPOINT = 'http://localhost:8080/v1/graphql'
     answers.JWT_CLAIMS_KEY = 'https://hasura.io/jwt/claims'
+    answers.HASURA_GRAPHQL_ADMIN_SECRET = 'admin-secret'
     // If they are using the tesseract platform then ask for the tenant id
     answers.TENANT_ID = await input( {
       message: 'Enter the TENANT_ID',
@@ -31,6 +32,12 @@ const setupQuestions = async ( args ) => {
     } )
     answers.JWT_CLAIMS_KEY = await input( {
       message: 'Enter the JWT_CLAIMS_KEY',
+      default: 'https://hasura.io/jwt/claims'
+    } )
+    // ask for the admin secret
+    answers.HASURA_GRAPHQL_ADMIN_SECRET = await input( {
+      message: 'Enter the HASURA ADMIN SECRET',
+      default: 'admin-secret'
     } )
   }
 

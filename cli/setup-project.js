@@ -78,16 +78,15 @@ const updateProjectConfig = async ( projectName ) => {
   )
 }
 
-const updateEnvFiles = ( { HASURA_GRAPHQL_ENDPOINT, TENANT_ID, JWT_CLAIMS_KEY } ) => {
+const updateEnvFiles = ( { HASURA_GRAPHQL_ENDPOINT, TENANT_ID, JWT_CLAIMS_KEY, projectName } ) => {
   // update .env.development, .env.staging, .env.production with this content
   // HASURA_GRAPHQL_ENDPOINT=http://localhost:8080/v1/graphql
   // TENANT_ID=MISSING_TENANT_ID
   // JWT_CLAIMS_KEY=https://hasura.io/jwt/claims
 
-  const envFiles = ['.env.development', '.env.staging', '.env.production']
-  envFiles.forEach( envFile => {
-    fs.writeFileSync( envFile, `HASURA_GRAPHQL_ENDPOINT=${HASURA_GRAPHQL_ENDPOINT}\nTENANT_ID=${TENANT_ID}\nJWT_CLAIMS_KEY=${JWT_CLAIMS_KEY}` )
-  } )
+  fs.writeFileSync( `${projectName}/.env.development`, `HASURA_GRAPHQL_ENDPOINT=${HASURA_GRAPHQL_ENDPOINT}\nTENANT_ID=${TENANT_ID}\nJWT_CLAIMS_KEY=${JWT_CLAIMS_KEY}` )
+  fs.writeFileSync( `${projectName}/.env.staging`, `HASURA_GRAPHQL_ENDPOINT=${HASURA_GRAPHQL_ENDPOINT}\nTENANT_ID=${TENANT_ID}\nJWT_CLAIMS_KEY=${JWT_CLAIMS_KEY}` )
+  fs.writeFileSync( `${projectName}/.env.production`, `HASURA_GRAPHQL_ENDPOINT=${HASURA_GRAPHQL_ENDPOINT}\nTENANT_ID=${TENANT_ID}\nJWT_CLAIMS_KEY=${JWT_CLAIMS_KEY}` )
 }
 
 const updateHasuraConfig = ( { HASURA_GRAPHQL_ENDPOINT, projectName } ) => {
@@ -100,15 +99,13 @@ const updateHasuraConfig = ( { HASURA_GRAPHQL_ENDPOINT, projectName } ) => {
   fs.writeFileSync( hasuraConfigPath, replaced, { spaces: 2 } )
 }
 
-const createEnvFiles = ( { HASURA_GRAPHQL_ENDPOINT, projectName } ) => {
+const createEnvFiles = ( { JWT_CLAIMS_KEY, HASURA_GRAPHQL_ENDPOINT, HASURA_GRAPHQL_ADMIN_SECRET, projectName } ) => {
   const graphqlEndpointRoot = HASURA_GRAPHQL_ENDPOINT.substring( 0, HASURA_GRAPHQL_ENDPOINT.indexOf( '/v1/graphql' ) )
-  const cliDefaultEnvContent = `HASURA_GRAPHQL_ENDPOINT=${graphqlEndpointRoot}\nHASURA_GRAPHQL_ADMIN_SECRET=admin-secret\nWORKER_URL=http://localhost:8787\nWORKER_API_KEY=worker-api-key`
+  const cliDefaultEnvContent = `HASURA_GRAPHQL_ENDPOINT=${graphqlEndpointRoot}\nHASURA_GRAPHQL_ADMIN_SECRET=${HASURA_GRAPHQL_ADMIN_SECRET}\nWORKER_URL=http://localhost:8787\nWORKER_API_KEY=worker-api-key`
   fs.writeFileSync( `${projectName}/hasura/.env`, cliDefaultEnvContent )
   fs.writeFileSync( `${projectName}/scripts/.env`, cliDefaultEnvContent )
 
-  fs.writeFileSync( `${projectName}/.env`, `HASURA_GRAPHQL_ENDPOINT=http://localhost:8080/v1/graphql
-    HASURA_GRAPHQL_ADMIN_SECRET=admin-secret
-JWT_CLAIMS_KEY=https://hasura.io/jwt/claims`)
+  fs.writeFileSync( `${projectName}/.env`, `HASURA_GRAPHQL_ENDPOINT=${HASURA_GRAPHQL_ENDPOINT}\nHASURA_GRAPHQL_ADMIN_SECRET=${HASURA_GRAPHQL_ADMIN_SECRET}\nJWT_CLAIMS_KEY=${JWT_CLAIMS_KEY}` )
 }
 
 const setupGeneratedFolders = ( projectName ) => {
